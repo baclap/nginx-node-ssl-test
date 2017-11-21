@@ -47,3 +47,28 @@ Setting up NGINX -> Node w/ SSL on AWS
     }
     ```
 - restart nginx
+
+### Setup subdomain
+- add subdomain in Route 53 to domain with nameservers already configured properly
+    - given an ip value of the public ip for the EC2 instance
+- update nginx configured
+    - ```
+    server {
+        listen 80;
+        server_name ssl-test.baclap.com;
+
+        location / {
+            proxy_pass http://127.0.0.1:3000;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+    }
+
+    server {
+        listen 80 default_server;
+        server_name _; # wildcard domain
+        return 444; # "go away"
+    }
+    ```
