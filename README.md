@@ -72,3 +72,9 @@ Setting up NGINX -> Node w/ SSL on AWS
         return 444; # "go away"
     }
     ```
+
+### Setup SSL
+- https://www.digitalocean.com/community/tutorials/how-to-set-up-let-s-encrypt-with-nginx-server-blocks-on-ubuntu-16-04
+- install certbot
+- ensure https is allowed in AWS security group
+- wow this is super easy
