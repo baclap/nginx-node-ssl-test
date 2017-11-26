@@ -78,3 +78,20 @@ Setting up NGINX -> Node w/ SSL on AWS
 - install certbot
 - ensure https is allowed in AWS security group
 - wow this is super easy
+
+### Setup CloudWatch Logs
+- https://docs.docker.com/engine/admin/logging/awslogs/
+- https://wdullaer.com/blog/2016/02/28/pass-credentials-to-the-awslogs-docker-logging-driver-on-ubuntu/
+- run the node app docker container using the `awslogs` log driver
+- first setup the log group and then the log stream within that group in the AWS CloudWatch Logs console
+- configure AWS creds for docker as described in 2nd link above
+- to run container:
+    - ```
+    sudo docker run --log-driver="awslogs" \
+                    --log-opt awslogs-region="<REGION>" \
+                    --log-opt awslogs-group="<GROUP>" \
+                    --log-opt awslogs-stream="<STREAM>" \
+                    -d \
+                    -p 3000:3000 \
+                    <IMAGE>
+    ```
