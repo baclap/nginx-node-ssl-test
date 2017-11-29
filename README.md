@@ -82,9 +82,9 @@ Setting up NGINX -> Node w/ SSL on AWS
 ### Setup CloudWatch Logs
 - https://docs.docker.com/engine/admin/logging/awslogs/
 - https://wdullaer.com/blog/2016/02/28/pass-credentials-to-the-awslogs-docker-logging-driver-on-ubuntu/
-- run the node app docker container using the `awslogs` log driver
+- TLDR: run the node app docker container using the `awslogs` log driver
 - first setup the log group and then the log stream within that group in the AWS CloudWatch Logs console
-- configure AWS creds for docker as described in 2nd link above
+- create IAM Role with `CloudWatchLogsFullAccess` policy and attach role to EC2 instance
 - to run container:
     - ```
     sudo docker run --log-driver="awslogs" \
