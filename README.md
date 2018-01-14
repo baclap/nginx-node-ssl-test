@@ -33,45 +33,48 @@ Setting up NGINX -> Node w/ SSL on AWS
 ### Setup NGINX reverse proxy
 - remove `/etc/nginx/sites-enabled/default` (symlinked file)
 - add new `*.conf` file to `/etc/nginx/sites-available` then symlink to `sites-enabled`
-    - ```
-    server {
-        listen 80 default_server;
 
-        location / {
-            proxy_pass http://127.0.0.1:3000;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
+```
+server {
+    listen 80 default_server;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
-    ```
+}
+```
+
 - restart nginx
 
 ### Setup subdomain
 - add subdomain in Route 53 to domain with nameservers already configured properly
     - given an ip value of the public ip for the EC2 instance
 - update nginx configured
-    - ```
-    server {
-        listen 80;
-        server_name ssl-test.baclap.com;
 
-        location / {
-            proxy_pass http://127.0.0.1:3000;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-    }
+```
+server {
+    listen 80;
+    server_name ssl-test.baclap.com;
 
-    server {
-        listen 80 default_server;
-        server_name _; # wildcard domain
-        return 444; # "go away"
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
-    ```
+}
+
+server {
+    listen 80 default_server;
+    server_name _; # wildcard domain
+    return 444; # "go away"
+}
+```
 
 ### Setup SSL
 - https://www.digitalocean.com/community/tutorials/how-to-set-up-let-s-encrypt-with-nginx-server-blocks-on-ubuntu-16-04
@@ -86,12 +89,13 @@ Setting up NGINX -> Node w/ SSL on AWS
 - first setup the log group and then the log stream within that group in the AWS CloudWatch Logs console
 - create IAM Role with `CloudWatchLogsFullAccess` policy and attach role to EC2 instance
 - to run container:
-    - ```
-    sudo docker run --log-driver="awslogs" \
-                    --log-opt awslogs-region="<REGION>" \
-                    --log-opt awslogs-group="<GROUP>" \
-                    --log-opt awslogs-stream="<STREAM>" \
-                    -d \
-                    -p 3000:3000 \
-                    <IMAGE>
-    ```
+
+```
+sudo docker run --log-driver="awslogs" \
+                --log-opt awslogs-region="<REGION>" \
+                --log-opt awslogs-group="<GROUP>" \
+                --log-opt awslogs-stream="<STREAM>" \
+                -d \
+                -p 3000:3000 \
+                <IMAGE>
+```
